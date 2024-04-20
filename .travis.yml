@@ -16,12 +16,12 @@ install:
 script:
   - make test
 before_deploy:
-  - poetry config repositories.ibm-artifactory $ARTIFACTORY_REPO
-  - poetry config http-basic.ibm-artifactory $ARTIFACTORY_USER $ARTIFACTORY_PASS
+  - poetry config repositories.pypi $ARTIFACTORY_REPO
+  - poetry config http-basic.pypi $ARTIFACTORY_USER $ARTIFACTORY_PASS
   - poetry build -f sdist
 deploy:
   provider: script
-  script: poetry publish -r ibm-artifactory
+  script: poetry publish -r pypi
   skip_cleanup: true
   true:
     branch: main
