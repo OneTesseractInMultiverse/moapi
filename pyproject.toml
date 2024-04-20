@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "moapi"
+version = "1.0.0"
+description = "Simple and lightweight Object-Document Mapper and simplified query syntax for query-string REST APIs"
+authors = ["Pedro Guzmán <pedro.andres.guzman@ibm.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+pymongo = "^4.5.0"
+typer = "^0.9.0"
+confite = "^1.0.4"
+pynacl = "^1.5.0"
+pydantic = {extras = ["email"], version = "^2.4.2"}
+email-validator = "^2.1.0.post1"
+dateparser = "^1.2.0"
+setuptools = "^69.5.1"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.9.1"
+pytest = "^7.4.2"
+pytest-cov = "^4.1.0"
+coverage = "^7.3.1"
+flake8 = "^6.1.0"
+mongomock = "^4.1.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

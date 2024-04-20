@@ -1,0 +1,28 @@
+language: python
+python:
+  - 3.11
+branches:
+  only:
+    - main
+    - development
+    - test
+    - ic4g
+notifications:
+  slack: ibm-cloudplatform:A0dghgxajjlRicfCGqLumVKE
+before_install:
+  - pip install poetry
+install:
+  - poetry install
+script:
+  - make test
+before_deploy:
+  - poetry config repositories.ibm-artifactory $ARTIFACTORY_REPO
+  - poetry config http-basic.ibm-artifactory $ARTIFACTORY_USER $ARTIFACTORY_PASS
+  - poetry build -f sdist
+deploy:
+  provider: script
+  script: poetry publish -r ibm-artifactory
+  skip_cleanup: true
+  true:
+    branch: main
+    condition: "$TRAVIS_PYTHON_VERSION == 3.11"
