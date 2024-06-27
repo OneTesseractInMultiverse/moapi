@@ -1,6 +1,9 @@
+import logging
 from typing import TypeVar, Generic
 
 from moapi.models import Entity
+
+_LOGGER = logging.getLogger(__name__)
 
 MoAPIType = TypeVar("MoAPIType", bound=Entity)
 
@@ -37,8 +40,8 @@ class QueryString(Generic[MoAPIType]):
         self.raw_query: dict = query_string
         self.__document_class = self.get_document_class()
         self.schema: dict = self.__document_class.model_json_schema()
-        print(self.schema)  # TODO REMOVE THIS
         self.verify_properties()
+        _LOGGER.debug(f"Using schema: \n {self.schema}")
 
     # -----------------------------------------------------
     # METHOD GET DOCUMENT CLASS

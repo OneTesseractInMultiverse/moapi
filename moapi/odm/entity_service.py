@@ -32,9 +32,6 @@ MoAPIType = TypeVar("MoAPIType", bound=Entity)
 OutputMoAPIType = TypeVar("OutputMoAPIType", bound=BaseModel)
 
 
-# ---------------------------------------------------------
-# FUNCTION HANDLE MONGO INTERNAL ID
-# ---------------------------------------------------------
 def handle_mongo_internal_id(model_data: dict) -> dict:
     if MONGO_MODEL_ID_KEY in model_data.keys():
         mongo_internal_id = model_data.pop(MONGO_MODEL_ID_KEY)
@@ -61,9 +58,6 @@ def traverse_cursor_and_copy(cursor):
     return result_set
 
 
-# ---------------------------------------------------------
-# FUNCTION MODEL TO DOCUMENT
-# ---------------------------------------------------------
 def model_to_document(model: MoAPIType) -> dict:
     """
     Converts an instance of a model to a dictionary that can be stored as a
@@ -76,11 +70,8 @@ def model_to_document(model: MoAPIType) -> dict:
     return handle_mongo_internal_id(model_data=model_data)
 
 
-# ---------------------------------------------------------
-# FUNCTION DOCUMENT TO MODEL
-# ---------------------------------------------------------
 def document_to_model(
-    model_type: type[MoAPIType], document: dict
+        model_type: type[MoAPIType], document: dict
 ) -> MoAPIType:
     # Make a local copy in case document is a reference from a cursor
     document_data: dict = document.copy()
@@ -91,11 +82,8 @@ def document_to_model(
     return model_type.model_validate(document_data, strict=True)
 
 
-# ---------------------------------------------------------
-# FUNCTION DOCUMENT LIST TO MODEL LIST
-# ---------------------------------------------------------
 def document_list_to_model_list(
-    model_type: type[MoAPIType], documents: Iterable[dict]
+        model_type: type[MoAPIType], documents: Iterable[dict]
 ) -> Iterable[MoAPIType]:
     model_list: list = []
     for document in documents:
@@ -106,7 +94,7 @@ def document_list_to_model_list(
 
 
 def model_list_to_document_list(
-    models: Iterable[MoAPIType],
+        models: Iterable[MoAPIType],
 ) -> Iterable[dict]:
     document_list: list = []
     for model in models:
@@ -114,20 +102,14 @@ def model_list_to_document_list(
     return document_list
 
 
-# ---------------------------------------------------------
-# CLASS VAP ENTITY SERVICE
-# ---------------------------------------------------------
 class EntityService(Generic[MoAPIType]):
     class Meta:
         collection_name: str
 
-    # -----------------------------------------------------
-    # CONSTRUCTOR
-    # -----------------------------------------------------
     def __init__(
-        self,
-        collection_name: str,
-        db_connection_parameters: MongoDBParameters,
+            self,
+            collection_name: str,
+            db_connection_parameters: MongoDBParameters,
     ):
         self.collection_name = collection_name
         self.connection_parameters: MongoDBParameters = (
@@ -136,9 +118,6 @@ class EntityService(Generic[MoAPIType]):
         self.entities: Collection = self.collection
         self.__document_class = self.get_document_class()
 
-    # -----------------------------------------------------
-    # METHOD GET DOCUMENT CLASS
-    # -----------------------------------------------------
     def get_document_class(self):
         return (
             getattr(self.Meta, "document_class")
@@ -146,21 +125,15 @@ class EntityService(Generic[MoAPIType]):
             else self.__orig_bases__[0].__args__[0]  # type: ignore
         )
 
-    # -----------------------------------------------------
-    # PROPERTY COLLECTION
-    # -----------------------------------------------------
     @property
     def collection(self) -> Collection:
         return self.connection_parameters.db[self.collection_name]
 
-    # -----------------------------------------------------
-    # METHOD GET
-    # -----------------------------------------------------
     def get(
-        self,
-        query: dict,
-        skip: Optional[int] = None,
-        limit: Optional[int] = None,
+            self,
+            query: dict,
+            skip: Optional[int] = None,
+            limit: Optional[int] = None,
     ):
         """
         Get a list of documents on the given collection based
@@ -181,14 +154,11 @@ class EntityService(Generic[MoAPIType]):
             cursor.limit(limit)
         return traverse_cursor_and_copy(cursor)
 
-    # -----------------------------------------------------
-    # METHOD TYPED GET
-    # -----------------------------------------------------
-    def typed_get(
-        self,
-        query: dict,
-        skip: Optional[int] = None,
-        limit: Optional[int] = None,
+    def get_typed(
+            self,
+            query: dict,
+            skip: Optional[int] = None,
+            limit: Optional[int] = None,
     ) -> Iterable[MoAPIType]:
         """
         Get a list of documents on a given collection based on a
@@ -205,11 +175,8 @@ class EntityService(Generic[MoAPIType]):
             documents=self.get(query=query, skip=skip, limit=limit),
         )
 
-    # -----------------------------------------------------
-    # METHOD TYPED GET ONE
-    # -----------------------------------------------------
     def get_one_typed(
-        self, identifier_key: str, identifier_value: any
+            self, identifier_key: str, identifier_value: any
     ) -> Optional[MoAPIType]:
         result = self.entities.find_one({identifier_key: identifier_value})
 
@@ -219,9 +186,6 @@ class EntityService(Generic[MoAPIType]):
             else None
         )
 
-    # -----------------------------------------------------
-    # METHOD TYPED ADD ONE
-    # -----------------------------------------------------
     def add_one_typed(self, model: MoAPIType) -> str:
         """
         Saves entity to database
@@ -232,37 +196,22 @@ class EntityService(Generic[MoAPIType]):
             model_to_document(model)
         ).inserted_id
 
-    # -----------------------------------------------------
-    # METHOD ADD ONE
-    # -----------------------------------------------------
     def add_one(self, model_data: dict) -> InsertOneResult:
         return self.entities.insert_one(model_data).inserted_id
 
-    # -----------------------------------------------------
-    # METHOD ADD MANY
-    # -----------------------------------------------------
     def add_many(self, documents: Iterable[dict]):
         return self.entities.insert_many(documents=documents)
 
-    # -----------------------------------------------------
-    # METHOD ADD MANY TYPED
-    # -----------------------------------------------------
     def add_many_typed(self, models: Iterable[MoAPIType]):
         return self.add_many(model_list_to_document_list(models=models))
 
-    # -----------------------------------------------------
-    # METHOD UPDATE ONE
-    # -----------------------------------------------------
     def update_one(
-        self, filter_data: dict, document: dict
+            self, filter_data: dict, document: dict
     ) -> UpdateResult:
         return self.entities.update_one(
             filter=filter_data, update={"$set": document}
         )
 
-    # -----------------------------------------------------
-    # METHOD UPDATE ONE TYPED
-    # -----------------------------------------------------
     def update_one_typed(self, model: MoAPIType) -> UpdateResult:
         values: dict = model_to_document(model=model)
         values.pop(MONGO_INTERNAL_ID_KEY)
@@ -272,24 +221,23 @@ class EntityService(Generic[MoAPIType]):
             document=values,
         )
 
-    # -----------------------------------------------------
-    # METHOD PUSH ONE
-    # -----------------------------------------------------
+    def delete_one(self, filter_data: dict):
+        return self.entities.delete_one(
+            filter=filter_data
+        )
+
     def push_one(
-        self,
-        match_key: str,
-        match_key_value: str,
-        match_array: str,
-        new_value: any,
+            self,
+            match_key: str,
+            match_key_value: str,
+            match_array: str,
+            new_value: any,
     ) -> UpdateResult:
         filter_data: dict = {match_key: match_key_value}
         return self.entities.update_one(
             filter=filter_data, update={"$push": {match_array: new_value}}
         )
 
-    # -----------------------------------------------------
-    # METHOD GET BY HQL
-    # -----------------------------------------------------
     def get_by_moql(self, moql: str) -> list[dict] | None:
         return traverse_cursor_and_copy(
             self.entities.find(

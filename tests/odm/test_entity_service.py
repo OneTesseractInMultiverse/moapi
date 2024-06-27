@@ -154,14 +154,14 @@ class TestTypedGet:
     def test_returns_correct_number_of_docs_based_on_query(self):
         service: DummyModelService = DummyModelService()
         service.add_many_typed(generate_list_of_models())
-        actual: list[DummyModel] = list(service.typed_get(query={}))
+        actual: list[DummyModel] = list(service.get_typed(query={}))
         assert len(actual) == 10
 
     def test_returns_correct_number_of_docs_based_on_skip(self):
         service: DummyModelService = DummyModelService()
         service.add_many_typed(generate_list_of_models())
         actual: list[DummyModel] = list(
-            service.typed_get(query={}, skip=5)
+            service.get_typed(query={}, skip=5)
         )
         assert len(actual) == 5
 
@@ -169,7 +169,7 @@ class TestTypedGet:
         service: DummyModelService = DummyModelService()
         service.add_many_typed(generate_list_of_models())
         actual: list[DummyModel] = list(
-            service.typed_get(query={}, limit=5)
+            service.get_typed(query={}, limit=5)
         )
         assert len(actual) == 5
 
