@@ -22,27 +22,35 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    
     - name: Set up Python
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
       with:
         python-version: '3.x'
+        
     - name: Install poetry
       uses: abatilo/actions-poetry@v2
+      
     - name: Setup a local virtual environment (if no poetry.toml file)
       run: |
         poetry config virtualenvs.create true --local
         poetry config virtualenvs.in-project true --local
+        
     - uses: actions/cache@v3
       name: Define a cache for the virtual environment based on the dependencies lock file
       with:
         path: ./.venv
         key: venv-${{ hashFiles('poetry.lock') }}
+        
     - name: Install dependencies
       run: poetry install
+      
     - name: Run the automated tests
       run: poetry run pytest -vv --cov-report term-missing --cov=moapi tests/
+      
     - name: Build the Package
       run: poetry build
+      
     - name: Publish package
       uses: pypa/gh-action-pypi-publish@27b31702a0e7fc50959f5ad993c78deac1bdfc29
       with:
