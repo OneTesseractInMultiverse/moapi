@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "moapi"
-version = "1.0.0"
+version = "1.1.0"
 description = "Simple and lightweight Object-Document Mapper and simplified query syntax for query-string REST APIs"
 authors = ["Pedro Guzmán <pedro.andres.guzman@ibm.com>"]
 readme = "README.md"
