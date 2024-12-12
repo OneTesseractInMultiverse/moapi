@@ -1,8 +1,8 @@
 [tool.poetry]
 name = "moapi"
-version = "1.1.0"
+version = "1.1.1"
 description = "Simple and lightweight Object-Document Mapper and simplified query syntax for query-string REST APIs"
-authors = ["Pedro Guzmán <pedro.andres.guzman@ibm.com>"]
+authors = ["Pedro Guzmán <pedro@subvertic.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
@@ -15,6 +15,7 @@ pydantic = {extras = ["email"], version = "^2.4.2"}
 email-validator = "^2.1.0.post1"
 dateparser = "^1.2.0"
 setuptools = "^70.0.0"
+ruff = "^0.8.0"
 
 
 [tool.poetry.group.dev.dependencies]

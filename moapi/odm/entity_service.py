@@ -3,7 +3,6 @@ from typing import TypeVar, Generic, Optional, Iterable, Callable
 from pydantic import BaseModel
 from pymongo.collection import Collection
 from pymongo.results import InsertOneResult, UpdateResult
-
 from moapi.moql.casters import (
     cast_as_list,
     cast_as_timestamp,
@@ -12,7 +11,6 @@ from moapi.moql.casters import (
     cast_as_str,
 )
 from moapi.moql.core import MoQL
-
 from moapi.models.core.entity import Entity
 from moapi.odm.connection import (
     MongoDBParameters,
@@ -71,7 +69,7 @@ def model_to_document(model: MoAPIType) -> dict:
 
 
 def document_to_model(
-        model_type: type[MoAPIType], document: dict
+    model_type: type[MoAPIType], document: dict
 ) -> MoAPIType:
     # Make a local copy in case document is a reference from a cursor
     document_data: dict = document.copy()
@@ -83,7 +81,7 @@ def document_to_model(
 
 
 def document_list_to_model_list(
-        model_type: type[MoAPIType], documents: Iterable[dict]
+    model_type: type[MoAPIType], documents: Iterable[dict]
 ) -> Iterable[MoAPIType]:
     model_list: list = []
     for document in documents:
@@ -94,7 +92,7 @@ def document_list_to_model_list(
 
 
 def model_list_to_document_list(
-        models: Iterable[MoAPIType],
+    models: Iterable[MoAPIType],
 ) -> Iterable[dict]:
     document_list: list = []
     for model in models:
@@ -107,9 +105,9 @@ class EntityService(Generic[MoAPIType]):
         collection_name: str
 
     def __init__(
-            self,
-            collection_name: str,
-            db_connection_parameters: MongoDBParameters,
+        self,
+        collection_name: str,
+        db_connection_parameters: MongoDBParameters,
     ):
         self.collection_name = collection_name
         self.connection_parameters: MongoDBParameters = (
@@ -130,10 +128,10 @@ class EntityService(Generic[MoAPIType]):
         return self.connection_parameters.db[self.collection_name]
 
     def get(
-            self,
-            query: dict,
-            skip: Optional[int] = None,
-            limit: Optional[int] = None,
+        self,
+        query: dict,
+        skip: Optional[int] = None,
+        limit: Optional[int] = None,
     ):
         """
         Get a list of documents on the given collection based
@@ -155,10 +153,10 @@ class EntityService(Generic[MoAPIType]):
         return traverse_cursor_and_copy(cursor)
 
     def get_typed(
-            self,
-            query: dict,
-            skip: Optional[int] = None,
-            limit: Optional[int] = None,
+        self,
+        query: dict,
+        skip: Optional[int] = None,
+        limit: Optional[int] = None,
     ) -> Iterable[MoAPIType]:
         """
         Get a list of documents on a given collection based on a
@@ -176,7 +174,7 @@ class EntityService(Generic[MoAPIType]):
         )
 
     def get_one_typed(
-            self, identifier_key: str, identifier_value: any
+        self, identifier_key: str, identifier_value: any
     ) -> Optional[MoAPIType]:
         result = self.entities.find_one({identifier_key: identifier_value})
 
@@ -206,7 +204,7 @@ class EntityService(Generic[MoAPIType]):
         return self.add_many(model_list_to_document_list(models=models))
 
     def update_one(
-            self, filter_data: dict, document: dict
+        self, filter_data: dict, document: dict
     ) -> UpdateResult:
         return self.entities.update_one(
             filter=filter_data, update={"$set": document}
@@ -222,16 +220,22 @@ class EntityService(Generic[MoAPIType]):
         )
 
     def delete_one(self, filter_data: dict):
-        return self.entities.delete_one(
-            filter=filter_data
-        )
+        """
+        TODO write tests
+        Args:
+            filter_data:
+
+        Returns:
+
+        """
+        return self.entities.delete_one(filter=filter_data)
 
     def push_one(
-            self,
-            match_key: str,
-            match_key_value: str,
-            match_array: str,
-            new_value: any,
+        self,
+        match_key: str,
+        match_key_value: str,
+        match_array: str,
+        new_value: any,
     ) -> UpdateResult:
         filter_data: dict = {match_key: match_key_value}
         return self.entities.update_one(

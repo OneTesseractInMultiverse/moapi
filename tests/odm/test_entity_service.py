@@ -30,6 +30,17 @@ class DummyModelService(EntityService[DummyModel]):
         super().__init__(COLLECTION_NAME, get_connection_parameters())
 
 
+class TestDeleteOne:
+    def test_delete_one_by_id(self):
+        # First we add an entry that we are going to delete
+        service: DummyModelService = DummyModelService()
+        service.add_one(model_data=get_dummy_model_data())
+
+        # Act
+        service.delete_one({"id": DUMMY_MODEL_ID})
+        assert service.get_one_typed("id", DUMMY_MODEL_ID) is None
+
+
 class TestAddOne:
     def test_adding_single_plain_dictionary_data_as_document_id(self):
         expected: str = OBJECT_ID_VALUE
