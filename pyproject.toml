@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "moapi"
-version = "1.1.1"
+version = "1.2.0"
 description = "Simple and lightweight Object-Document Mapper and simplified query syntax for query-string REST APIs"
 authors = ["Pedro Guzmán <pedro@subvertic.com>"]
 readme = "README.md"
@@ -16,6 +16,7 @@ email-validator = "^2.1.0.post1"
 dateparser = "^1.2.0"
 setuptools = "^70.0.0"
 ruff = "^0.8.0"
+motor = "^3.6.0"
 
 
 [tool.poetry.group.dev.dependencies]
