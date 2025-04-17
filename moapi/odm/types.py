@@ -1,15 +1,8 @@
-from typing import (
-    Callable,
-    TypeVar
-)
+from typing import Callable, TypeVar
 
-from pydantic import (
-    BaseModel
-)
+from pydantic import BaseModel
 
-from moapi.models import (
-    Entity
-)
+from moapi.models import Entity
 from moapi.moql.casters import (
     cast_as_list,
     cast_as_object_id,

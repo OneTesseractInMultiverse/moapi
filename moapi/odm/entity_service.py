@@ -144,12 +144,15 @@ class EntityService(Generic[MoAPIType]):
         self, identifier_key: str, identifier_value: any
     ) -> Optional[MoAPIType]:
         """
-
+        Given a key and a value for that particular key,
+        this method finds a single document that matches
+        the given identifier_key and identifier_value or
+        returns None if no such document exists.
         Args:
-            identifier_key:
-            identifier_value:
+            identifier_key: the name of the key
+            identifier_value: the value of the key
 
-        Returns:
+        Returns: MoAPIType or None
 
         """
         result = self.entities.find_one({identifier_key: identifier_value})
